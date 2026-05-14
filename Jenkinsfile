@@ -54,10 +54,10 @@ pipeline {
         stage('Deploy') {
     steps {
         echo "🚀 Déploiement de l'application..."
-        sh "docker compose pull"
-        sh "docker compose up -d --no-build"
+        sh "BUILD_NUMBER=${BUILD_NUMBER} docker compose up -d"
         echo "✅ Application déployée !"
     }
+}
 }
     }
 
