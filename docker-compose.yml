@@ -1,0 +1,43 @@
+services:
+  mongodb:
+    image: mongo:6
+    container_name: mongodb
+    ports:
+      - "27018:27017"
+    volumes:
+      - mongo_data:/data/db
+    networks:
+      - portfolio-network
+
+  backend:
+    build: ./portfolio-api
+    container_name: backend
+    ports:
+      - "3000:3000"
+    environment:
+      - PORT=3000
+      - MONGO_URI=mongodb://mongodb:27017/portfolio
+    depends_on:
+      - mongodb
+    volumes:
+      - uploads_data:/app/uploads
+    networks:
+      - portfolio-network
+
+  frontend:
+    build: ./portfolio-react
+    container_name: frontend
+    ports:
+      - "5173:5173"
+    depends_on:
+      - backend
+    networks:
+      - portfolio-network
+
+volumes:
+  mongo_data:
+  uploads_data:
+
+networks:
+  portfolio-network:
+    driver: bridge

@@ -1,0 +1,13 @@
+{
+  "projets": [
+    {
+      "libelle": "site web statique",
+      "image": "https://i.ytimg.com/vi/ecv-19sYL3w/maxresdefault.jpg",
+      "description": "dasjas",
+      "technologie": "has,dassa,asfsa",
+      "lien": "",
+      "id": "4NzMw8jcdSo"
+    }
+  ],
+  "$schema": "./node_modules/json-server/schema.json"
+}
