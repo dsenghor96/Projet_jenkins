@@ -43,10 +43,10 @@ pipeline {
                 )]) {
                     sh '''
                         echo "$DOCKER_PASS" | docker login -u "$DOCKER_USER" --password-stdin
-                        docker push ''' + env.BACKEND_IMAGE + '''
-                        docker push ''' + env.FRONTEND_IMAGE + '''
+                        docker push "$BACKEND_IMAGE"
+                        docker push "$FRONTEND_IMAGE"
+                        echo "✅ Images pushées sur DockerHub !"
                     '''
-                    echo "✅ Images pushées sur DockerHub !"
                 }
             }
         }
