@@ -52,12 +52,13 @@ pipeline {
 }
 
         stage('Deploy') {
-            steps {
-                echo "🚀 Déploiement de l'application..."
-                sh "docker compose up -d"
-                echo "✅ Application déployée !"
-            }
-        }
+    steps {
+        echo "🚀 Déploiement de l'application..."
+        sh "docker compose pull"
+        sh "docker compose up -d --no-build"
+        echo "✅ Application déployée !"
+    }
+}
     }
 
     post {
