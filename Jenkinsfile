@@ -25,6 +25,7 @@ pipeline {
                         sh "docker build -t ${BACKEND_IMAGE} ./portfolio-api"
                     }
                 }
+
                 stage('Frontend') {
                     steps {
                         echo "🔨 Build image frontend..."
@@ -54,7 +55,37 @@ pipeline {
         stage('Deploy') {
             steps {
                 echo "🚀 Déploiement de l'application..."
-                sh "BUILD_NUMBER=${BUILD_NUMBER} docker compose up -d"
+
+                sh '''
+                    export BUILD_NUMBER=${BUILD_NUMBER}
+
+                    echo "📁 Dossier actuel :"
+                    pwd
+
+                    echo "📄 Fichiers présents :"
+                    ls -la
+
+                    echo "📌 Build number utilisé : $BUILD_NUMBER"
+
+                    echo "🔍 Contenu du docker-compose.yml utilisé par Jenkins :"
+                    cat docker-compose.yml
+
+                    echo "🔍 Configuration Docker Compose finale :"
+                    docker compose -f docker-compose.yml config
+
+                    echo "🔍 Vérification des images locales :"
+                    docker images | grep "dieys/portfolio" || true
+
+                    echo "🧹 Arrêt des anciens containers..."
+                    docker compose -f docker-compose.yml down || true
+
+                    echo "🚀 Démarrage des containers sans rebuild..."
+                    docker compose -f docker-compose.yml up -d --no-build
+
+                    echo "📦 Containers actifs :"
+                    docker ps
+                '''
+
                 echo "✅ Application déployée !"
             }
         }
@@ -66,11 +97,13 @@ pipeline {
             echo "🌐 Frontend  : http://localhost:5173"
             echo "🔧 Backend   : http://localhost:3000"
         }
+
         failure {
             echo "❌ Le pipeline a échoué — vérifie les logs !"
         }
+
         always {
-            sh "docker logout"
+            sh "docker logout || true"
             echo "🔒 Déconnecté de DockerHub"
         }
     }
