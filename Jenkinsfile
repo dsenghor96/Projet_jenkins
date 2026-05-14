@@ -35,37 +35,36 @@ pipeline {
         }
 
         stage('Push sur DockerHub') {
-    steps {
-        withCredentials([usernamePassword(
-            credentialsId: 'dockerhub-credentials',
-            usernameVariable: 'DOCKER_USER',
-            passwordVariable: 'DOCKER_PASS'
-        )]) {
-            sh '''
-                echo "$DOCKER_PASS" | docker login -u "$DOCKER_USER" --password-stdin
-                docker push ''' + env.BACKEND_IMAGE + '''
-                docker push ''' + env.FRONTEND_IMAGE + '''
-            '''
-            echo "✅ Images pushées sur DockerHub !"
+            steps {
+                withCredentials([usernamePassword(
+                    credentialsId: 'dockerhub-credentials',
+                    usernameVariable: 'DOCKER_USER',
+                    passwordVariable: 'DOCKER_PASS'
+                )]) {
+                    sh '''
+                        echo "$DOCKER_PASS" | docker login -u "$DOCKER_USER" --password-stdin
+                        docker push ''' + env.BACKEND_IMAGE + '''
+                        docker push ''' + env.FRONTEND_IMAGE + '''
+                    '''
+                    echo "✅ Images pushées sur DockerHub !"
+                }
+            }
         }
-    }
-}
 
         stage('Deploy') {
-    steps {
-        echo "🚀 Déploiement de l'application..."
-        sh "BUILD_NUMBER=${BUILD_NUMBER} docker compose up -d"
-        echo "✅ Application déployée !"
-    }
-}
-}
+            steps {
+                echo "🚀 Déploiement de l'application..."
+                sh "BUILD_NUMBER=${BUILD_NUMBER} docker compose up -d"
+                echo "✅ Application déployée !"
+            }
+        }
     }
 
     post {
         success {
             echo "🎉 Pipeline exécuté avec succès !"
             echo "🌐 Frontend  : http://localhost:5173"
-            echo "🔧 Backend   : http://localhost:5000"
+            echo "🔧 Backend   : http://localhost:3000"
         }
         failure {
             echo "❌ Le pipeline a échoué — vérifie les logs !"
