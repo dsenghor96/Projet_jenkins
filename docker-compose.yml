@@ -10,7 +10,7 @@ services:
       - portfolio-network
 
   backend:
-    build: ./portfolio-api
+    image: dieys/portfolio-api:${BUILD_NUMBER}
     container_name: backend
     ports:
       - "3000:3000"
@@ -25,7 +25,7 @@ services:
       - portfolio-network
 
   frontend:
-    build: ./portfolio-react
+    image: dieys/portfolio-react:${BUILD_NUMBER}
     container_name: frontend
     ports:
       - "5173:5173"
