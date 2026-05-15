@@ -80,7 +80,7 @@ pipeline {
 
                 Jenkins CI/CD
             """,
-            to: 'ton-email@gmail.com'
+            to: 'dsenghor96@gmail.com'
         )
     }
     failure {
