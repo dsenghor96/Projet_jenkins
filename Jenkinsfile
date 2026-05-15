@@ -57,19 +57,56 @@ pipeline {
         }
     }
 
+    //
     post {
-        success {
-            echo "Pipeline exécuté avec succès."
-            echo "Frontend : http://localhost:5173"
-            echo "Backend  : http://localhost:3000"
-        }
+    success {
+        echo "Pipeline exécuté avec succès."
+        echo "Frontend : http://localhost:5173"
+        echo "Backend  : http://localhost:3000"
+        emailext(
+            subject: "✅ Jenkins - Build #${BUILD_NUMBER} réussi !",
+            body: """
+                Bonjour Dieynaba,
 
-        failure {
-            echo "Pipeline échoué. Vérifie les logs Jenkins."
-        }
+                Le pipeline ${JOB_NAME} a été exécuté avec succès !
 
-        always {
-            sh "docker logout || true"
-        }
+                Détails :
+                - Build     : #${BUILD_NUMBER}
+                - Branche   : ${GIT_BRANCH}
+                - Commit    : ${GIT_COMMIT}
+                - Durée     : ${currentBuild.durationString}
+
+                Voir les logs : ${BUILD_URL}
+
+                Jenkins CI/CD
+            """,
+            to: 'ton-email@gmail.com'
+        )
     }
+    failure {
+        echo "Pipeline échoué. Vérifie les logs Jenkins."
+        emailext(
+            subject: "❌ Jenkins - Build #${BUILD_NUMBER} échoué !",
+            body: """
+                Bonjour Dieynaba,
+
+                Le pipeline ${JOB_NAME} a échoué !
+
+                Détails :
+                - Build     : #${BUILD_NUMBER}
+                - Branche   : ${GIT_BRANCH}
+                - Commit    : ${GIT_COMMIT}
+
+                Voir les logs : ${BUILD_URL}
+
+                Jenkins CI/CD
+            """,
+            to: 'ton-email@gmail.com'
+        )
+    }
+    always {
+        sh "docker logout"
+        echo "🔒 Déconnecté de DockerHub"
+    }
+}
 }
